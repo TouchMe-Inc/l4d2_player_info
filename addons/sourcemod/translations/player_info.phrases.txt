@@ -1,0 +1,28 @@
+"Phrases"
+{
+	"BRACKET_START"
+	{
+		"en"			"┌ "
+	}
+
+	"BRACKET_MIDDLE"
+	{
+		"en"			"├ "
+	}
+
+	"BRACKET_END"
+	{
+		"en"			"└ "
+	}
+
+	"HEADER"
+	{
+		"en"			"<{green}Player Info{default}>"
+	}
+
+	"INFO"
+	{
+		"#format"		"{1:N},{2:.1f},{3:.1f}"
+		"en"			"{olive}{1} {default}Lerp: {2} · Hours: {3}"
+	}
+}
