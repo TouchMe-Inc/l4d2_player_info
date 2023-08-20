@@ -1,5 +1,5 @@
 # About player_info
-Coming soon
+Plugin displays information about players (lerp, hours).
 
 ## Commands
 * `!info` - Display player info.
