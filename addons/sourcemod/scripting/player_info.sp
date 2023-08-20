@@ -5,11 +5,11 @@
 public Plugin myinfo = {
 	name = "PlayerInfo",
 	author = "TouchMe",
-	description = "",
-	version = "build_0000"
+	description = "Plugin displays information about players (lerp, hours)",
+	version = "build_0001"
 };
 
-
+#define TRANSLATIONS            "player_info.phrases"
 #define APP_L4D2                550
 
 
@@ -20,8 +20,26 @@ ConVar
 	g_cvMaxInterpRatio = null;
 
 
+/**
+  * Called before OnPluginStart.
+  */
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	EngineVersion engine = GetEngineVersion();
+
+	if (engine != Engine_Left4Dead2)
+	{
+		strcopy(error, err_max, "Plugin only supports Left 4 Dead 2.");
+		return APLRes_SilentFailure;
+	}
+
+	return APLRes_Success;
+}
+
 public void OnPluginStart()
 {
+	LoadTranslations(TRANSLATIONS);
+
 	g_cvMinUpdateRate = FindConVar("sv_minupdaterate");
 	g_cvMaxUpdateRate = FindConVar("sv_maxupdaterate");
 	g_cvMinInterpRatio = FindConVar("sv_client_min_interp_ratio");
@@ -59,24 +77,27 @@ public Action Cmd_Info(iClient, int iArgs)
 	}
 
 	if (!iTotalPlayers) {
-		CReplyToCommand(iClient, "There is nothing here!");
 		return Plugin_Handled;
 	}
 
-	CReplyToCommand(iClient, "┌ [{green}Player Info{default}]:");
+	char sBracketStart[16]; FormatEx(sBracketStart, sizeof(sBracketStart), "%T", "BRACKET_START", iClient);
+	char sBracketMiddle[16]; FormatEx(sBracketMiddle, sizeof(sBracketMiddle), "%T", "BRACKET_MIDDLE", iClient);
+	char sBracketEnd[16]; FormatEx(sBracketEnd, sizeof(sBracketEnd), "%T", "BRACKET_END", iClient);
+
+	CReplyToCommand(iClient, "%s%T", sBracketStart, "HEADER", iClient);
 
 	int iPlayer;
 	int iPlayedTime;
 	float fLerpTime;
 
-	for (int iItem = 0; iItem <= iTotalPlayers; iItem ++)
+	for (int iItem = 0; iItem < iTotalPlayers; iItem ++)
 	{
 		iPlayer = iPlayers[iItem];
 		SteamWorks_GetStatCell(iPlayer, "Stat.TotalPlayTime.Total", iPlayedTime);
 		fLerpTime = GetLerpTime(iPlayer) * 1000;
 
-		CReplyToCommand(iClient, "%s {olive}%N {default}Lerp: %.01f · Hours: %.01f",
-			(iItem + 1) == iTotalPlayers ? "└" : "├",  iPlayer, fLerpTime, SecToHours(iPlayedTime));
+		CReplyToCommand(iClient, "%s%T", (iItem + 1) == iTotalPlayers ? sBracketEnd : sBracketMiddle,
+		"INFO", iClient, iPlayer, fLerpTime, SecToHours(iPlayedTime));
 	}
 
 	return Plugin_Handled;
