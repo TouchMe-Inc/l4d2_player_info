@@ -1,3 +1,6 @@
+#pragma semicolon               1
+#pragma newdecls                required
+
 #include <steamworks>
 #include <colors>
 
@@ -48,16 +51,20 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_info", Cmd_Info);
 }
 
-public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId)
+public void OnClientPostAdminCheck(int iClient)
 {
-	int iClient = GetClientFromSteamID(iAuthId);
+	if (!SteamWorks_IsConnected())
+	{
+		LogError("Steamworks: No Steam Connection!");
+		return;
+	}
 
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
 		SteamWorks_RequestStats(iClient, APP_L4D2);
 	}
 }
 
-public Action Cmd_Info(iClient, int iArgs)
+public Action Cmd_Info(int iClient, int iArgs)
 {
 	if (!IsValidClient(iClient)) {
 		return Plugin_Continue;
@@ -103,22 +110,8 @@ public Action Cmd_Info(iClient, int iArgs)
 	return Plugin_Handled;
 }
 
-int GetClientFromSteamID(int authid)
-{
-	for(int iClient = 1; iClient <= MaxClients; iClient++)
-	{
-		if(!IsClientConnected(iClient) || GetSteamAccountID(iClient) != authid) {
-			continue;
-		}
-
-		return iClient;
-	}
-
-	return -1;
-}
-
 bool IsValidClient(int iClient) {
-	return (iClient > 0 && iClient <= MaxClients)
+	return (iClient > 0 && iClient <= MaxClients);
 }
 
 float SecToHours(int iSeconds) {
