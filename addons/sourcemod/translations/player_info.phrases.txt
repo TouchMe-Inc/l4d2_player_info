@@ -15,14 +15,34 @@
 		"en"			"└ "
 	}
 
-	"HEADER"
+	"TAG"
 	{
 		"en"			"<{green}Player Info{default}>"
 	}
 
 	"INFO"
 	{
-		"#format"		"{1:N},{2:.1f},{3:.1f}"
-		"en"			"{olive}{1} {default}Lerp: {2} · Hours: {3}"
+		"#format"		"{1:s},{2:s},{3:s},{4:.1f},{5:.1f}"
+		"en"			"{1} {olive}·{default} {2}, {3} {olive}·{default} Lerp: {4} {olive}·{default} Hours: {5}"
+	}
+
+	"LAN_COUNTRY"
+	{
+		"en"			"Local"
+	}
+
+	"LAN_CITY"
+	{
+		"en"			"Hidden"
+	}
+
+	"UNKNOWN_COUNTRY"
+	{
+		"en"			"Unknown"
+	}
+
+	"UNKNOWN_CITY"
+	{
+		"en"			"Unknown"
 	}
 }
