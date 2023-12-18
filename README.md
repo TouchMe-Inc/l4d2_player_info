@@ -8,4 +8,5 @@ Plugin displays information about players (County, lerp, hours).
 
 ## Require
 * Colors
+* Geoip
 * [SteamWorks](https://github.com/hexa-core-eu/SteamWorks)
