@@ -139,10 +139,6 @@ Action Cmd_Info(int iClient, int iArgs)
 	return Plugin_Handled;
 }
 
-bool IsValidClient(int iClient) {
-	return (iClient > 0 && iClient <= MaxClients);
-}
-
 float SecToHours(int iSeconds) {
 	return float(iSeconds) / 3600.0;
 }
