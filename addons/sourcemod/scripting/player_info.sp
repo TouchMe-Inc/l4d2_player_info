@@ -42,9 +42,7 @@ ConVar
   */
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
-	EngineVersion engine = GetEngineVersion();
-
-	if (engine != Engine_Left4Dead2)
+	if (GetEngineVersion() != Engine_Left4Dead2)
 	{
 		strcopy(error, err_max, "Plugin only supports Left 4 Dead 2.");
 		return APLRes_SilentFailure;
@@ -67,15 +65,17 @@ public void OnPluginStart()
 
 public void OnClientPostAdminCheck(int iClient)
 {
+	if (!IsClientInGame(iClient) || IsFakeClient(iClient)) {
+		return;
+	}
+
 	if (!SteamWorks_IsConnected())
 	{
 		LogError("Steamworks: No Steam Connection!");
 		return;
 	}
 
-	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
-		SteamWorks_RequestStats(iClient, APP_L4D2);
-	}
+	SteamWorks_RequestStats(iClient, APP_L4D2);
 }
 
 Action Cmd_Info(int iClient, int iArgs)
