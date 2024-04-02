@@ -1,29 +1,8 @@
 "Phrases"
 {
-	"BRACKET_START"
-	{
-		"en"			"┌ "
-	}
-
-	"BRACKET_MIDDLE"
-	{
-		"en"			"├ "
-	}
-
-	"BRACKET_END"
-	{
-		"en"			"└ "
-	}
-
 	"TAG"
 	{
-		"en"			"<{green}Player Info{default}>"
-	}
-
-	"INFO"
-	{
-		"#format"		"{1:s},{2:s},{3:s},{4:.1f},{5:.1f}"
-		"en"			"{1} {olive}·{default} {2}, {3} {olive}·{default} Lerp: {4} {olive}·{default} Hours: {5}"
+		"en"			"<{green}Player Info{default}> "
 	}
 
 	"LAN_COUNTRY"
@@ -44,5 +23,65 @@
 	"UNKNOWN_CITY"
 	{
 		"en"			"Unknown"
+	}
+
+	"BAD_ARG"
+    {
+        "#format"		"{1:s}"
+        "en"			"Error: no players found for the request \"{1}\""
+    }
+
+	"MENU_PLAYER_TITLE"
+	{
+		"en"			"Select a player for show info:"
+	}
+
+    "MENU_INFO_TITLE"
+    {
+        "#format"		"{1:s}"
+        "en"			"About {1}"
+    }
+
+	"MENU_SPACE"
+	{
+		"en"			"- - - - - - - - - - - - - - - - - - -"
+	}
+
+	"MENU_BACK"
+	{
+		"en"			"Back"
+	}
+
+	"INFO_LOCATION"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"Location: {1}, {2}"
+	}
+
+    "INFO_VPN_DETECTING"
+	{
+		"en"			"VPN: Detecting..."
+	}
+
+    "INFO_VPN_DETECTED"
+	{
+		"en"			"VPN: Detected"
+	}
+
+	"INFO_VPN_NOT_DETECTED"
+	{
+		"en"			"VPN: Not detected"
+	}
+
+    "INFO_LERP"
+	{
+		"#format"		"{1:.1f}"
+		"en"			"Lerp: {1}"
+	}
+
+    "INFO_PLAYED_TIME"
+	{
+		"#format"		"{1:.1f}"
+		"en"			"Played time: {1} hours"
 	}
 }
