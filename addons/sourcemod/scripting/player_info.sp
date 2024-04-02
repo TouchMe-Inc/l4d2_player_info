@@ -62,7 +62,7 @@ public void OnAllPluginsLoaded() {
  *
  * @param sName     Library name
  */
-public void OnLibraryRemoved(const char[] sName) 
+public void OnLibraryRemoved(const char[] sName)
 {
 	if (StrEqual(sName, LIB_READY)) {
 		g_bReadyUpAvailable = false;
@@ -239,7 +239,7 @@ void ShowPlayerMenu(int iClient)
 
 	Menu hMenu = CreateMenu(HandlerPlayerMenu, MenuAction_Select|MenuAction_End);
 
-	SetMenuTitle(hMenu, "%T", "MENU_PLAYER_TITLE", iClient); // "Select a player for local mute"
+	SetMenuTitle(hMenu, "%T", "MENU_PLAYER_TITLE", iClient);
 
 	char sTarget[4], sName[MAX_NAME_LENGTH];
 
@@ -250,7 +250,7 @@ void ShowPlayerMenu(int iClient)
 			int iPlayer = iPlayers[iTeam][iPlayerIndex];
 
 			IntToString(iPlayer, sTarget, sizeof(sTarget));
-			GetClientNameFixed(iPlayer, sName, sizeof(sName), 18);
+			GetClientNameFixed(iPlayer, sName, sizeof(sName), 25);
 
 			AddMenuItem(hMenu, sTarget, sName);
 		}
@@ -329,6 +329,15 @@ void ShowInfoMenu(int iClient, int iTarget)
 		}
 	}
 
+	char sVpnStatus[32];
+
+	switch(g_iVpnClient[iTarget])
+	{
+		case VPN_DETECTING: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_DETECTING", iClient);
+		case VPN_DETECTED: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_DETECTED", iClient);
+		case VPN_NOT_DETECTED: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_NOT_DETECTED", iClient);
+	}
+
 	/*
 	 * Send panel.
 	 */
@@ -336,14 +345,7 @@ void ShowInfoMenu(int iClient, int iTarget)
 
 	DrawPanelFormatText(hPanel, "%T", "MENU_INFO_TITLE", iClient, sName);
 	DrawPanelFormatText(hPanel, "%T", "MENU_SPACE", iClient);
-
-	switch(g_iVpnClient[iTarget])
-	{
-		case VPN_DETECTING: DrawPanelFormatText(hPanel, "%T", "INFO_VPN_DETECTING", iClient);
-		case VPN_DETECTED: DrawPanelFormatText(hPanel, "%T", "INFO_VPN_DETECTED", iClient);
-		case VPN_NOT_DETECTED: DrawPanelFormatText(hPanel, "%T", "INFO_VPN_NOT_DETECTED", iClient);
-	}
-
+	DrawPanelFormatText(hPanel, "%T", "INFO_VPN", iClient, sVpnStatus);
 	DrawPanelFormatText(hPanel, "%T", "INFO_LOCATION", iClient, sCountry, sCity);
 	DrawPanelFormatText(hPanel, "%T", "INFO_LERP", iClient, GetClientLerp(iTarget));
 	DrawPanelFormatText(hPanel, "%T", "INFO_PLAYED_TIME", iClient, GetClientHours(iTarget));
@@ -363,7 +365,7 @@ int DummyHandler(Handle hMenu, MenuAction hAction, int iParam1, int iParam2)
 	/*
 	 * ReadyUp support.
 	 */
-	if (g_bReadyUpAvailable) {
+	if (g_bReadyUpAvailable && IsClientConnected(iParam1)) {
 		SetClientPanelVisible(iParam1, g_bReadyUpOldPanelVisible[iParam1]);
 	}
 

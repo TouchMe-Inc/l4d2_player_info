@@ -2,7 +2,7 @@
 {
 	"TAG"
 	{
-		"en"			"<{green}Player Info{default}> "
+		"en"			"<{green}Player Info{default}>"
 	}
 
 	"LAN_COUNTRY"
@@ -26,21 +26,21 @@
 	}
 
 	"BAD_ARG"
-    {
-        "#format"		"{1:s}"
-        "en"			"Error: no players found for the request \"{1}\""
-    }
+	{
+		"#format"		"{1:s}"
+		"en"			"Error: no players found for the request \"{1}\""
+	}
 
 	"MENU_PLAYER_TITLE"
 	{
 		"en"			"Select a player for show info:"
 	}
 
-    "MENU_INFO_TITLE"
-    {
-        "#format"		"{1:s}"
-        "en"			"About {1}"
-    }
+	"MENU_INFO_TITLE"
+	{
+		"#format"		"{1:s}"
+		"en"			"About {1}"
+	}
 
 	"MENU_SPACE"
 	{
@@ -58,28 +58,34 @@
 		"en"			"Location: {1}, {2}"
 	}
 
-    "INFO_VPN_DETECTING"
+	"INFO_VPN"
 	{
-		"en"			"VPN: Detecting..."
+		"#format"		"{1:s}"
+		"en"			"VPN: {1}"
 	}
 
-    "INFO_VPN_DETECTED"
+	"VPN_DETECTING"
 	{
-		"en"			"VPN: Detected"
+		"en"			"Detecting..."
 	}
 
-	"INFO_VPN_NOT_DETECTED"
+	"VPN_DETECTED"
 	{
-		"en"			"VPN: Not detected"
+		"en"			"Detected"
 	}
 
-    "INFO_LERP"
+	"VPN_NOT_DETECTED"
+	{
+		"en"			"Not detected"
+	}
+
+	"INFO_LERP"
 	{
 		"#format"		"{1:.1f}"
 		"en"			"Lerp: {1}"
 	}
 
-    "INFO_PLAYED_TIME"
+	"INFO_PLAYED_TIME"
 	{
 		"#format"		"{1:.1f}"
 		"en"			"Played time: {1} hours"
