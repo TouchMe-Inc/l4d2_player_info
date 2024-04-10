@@ -14,7 +14,7 @@ public Plugin myinfo = {
 	name = "PlayerInfo",
 	author = "TouchMe",
 	description = "Plugin displays information about players (Country, lerp, hours)",
-	version = "build_0003",
+	version = "build_0004",
 	url = "https://github.com/TouchMe-Inc/l4d2_player_info"
 };
 
@@ -45,7 +45,7 @@ enum
 }
 
 bool g_bReadyUpAvailable = false;
-bool g_bReadyUpOldPanelVisible[MAXPLAYERS + 1] = {false, ...};
+bool g_bOldClientReadyUpVisible[MAXPLAYERS + 1] = {false, ...};
 
 int g_iVpnClient[MAXPLAYERS + 1] = {0, ...};
 
@@ -146,6 +146,13 @@ public void OnClientAuthorized(int iClient, const char[] sAuthId)
  */
 public void HttpResponseDataReceived(Handle hRequest, bool bFailure, int offset, int bytesReceived, DataPack hPack)
 {
+	if (bFailure)
+	{
+		CloseHandle(hPack);
+		CloseHandle(hRequest);
+		return;
+	}
+
 	SteamWorks_GetHTTPResponseBodyCallback(hRequest, HttpRequestData, hPack);
 	CloseHandle(hRequest);
 }
@@ -295,9 +302,9 @@ void ShowInfoMenu(int iClient, int iTarget)
 	 */
 	if (g_bReadyUpAvailable)
 	{
-		g_bReadyUpOldPanelVisible[iClient] = IsClientPanelVisible(iClient);
+		g_bOldClientReadyUpVisible[iClient] = IsClientReadyUpVisible(iClient);
 
-		SetClientPanelVisible(iClient, false);
+		SetClientReadyUpVisible(iClient, false);
 	}
 
 	/*
@@ -366,7 +373,7 @@ int DummyHandler(Handle hMenu, MenuAction hAction, int iParam1, int iParam2)
 	 * ReadyUp support.
 	 */
 	if (g_bReadyUpAvailable && IsClientConnected(iParam1)) {
-		SetClientPanelVisible(iParam1, g_bReadyUpOldPanelVisible[iParam1]);
+		SetClientReadyUpVisible(iParam1, g_bOldClientReadyUpVisible[iParam1]);
 	}
 
 	if (hAction == MenuAction_Select && iParam2 == ITEM_BACK) {
@@ -435,7 +442,7 @@ int FindOneTarget(int iClient, const char[] sTarget)
 }
 
 /**
- *
+ * Detect lan ip.
  */
 bool IsLanIP(char src[16])
 {
