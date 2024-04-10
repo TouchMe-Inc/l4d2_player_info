@@ -2,7 +2,8 @@
 Plugin displays information about players (County, lerp, hours).
 
 ## Commands
-* `!info` - Display player info.
+* `!info` - Show player list.
+* `!info <name>` - Display player info.
 
 ## Require
 * Colors
