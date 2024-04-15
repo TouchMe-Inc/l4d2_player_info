@@ -1,5 +1,5 @@
 # About player_info
-Plugin displays information about players (County, lerp, hours).
+Plugin displays information about players (Country, lerp, hours, VPN, FS).
 
 ## Commands
 * `!info` - Show player list.
@@ -9,6 +9,3 @@ Plugin displays information about players (County, lerp, hours).
 * Colors
 * Geoip
 * [SteamWorks](https://github.com/hexa-core-eu/SteamWorks)
-
-## Support
-[ReadyUpRework](https://github.com/TouchMe-Inc/l4d2_readyup_rework)
