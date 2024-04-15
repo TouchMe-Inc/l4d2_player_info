@@ -2,7 +2,7 @@
 {
 	"TAG"
 	{
-		"ru"			"<{green}Player Info{default}>"
+		"ru"			"<{green}Player Info{default}> "
 	}
 
 	"LAN_COUNTRY"
@@ -75,6 +75,23 @@
 	}
 
 	"VPN_NOT_DETECTED"
+	{
+		"ru"			"Нет"
+	}
+
+	"INFO_FS"
+	{
+		"#format"		"{1:s}"
+		"ru"			"Family Sharing: {1}"
+	}
+
+	"FS_DETECTED"
+	{
+		"#format"		"{1:s}"
+		"ru"			"Да ({1})"
+	}
+
+	"FS_NOT_DETECTED"
 	{
 		"ru"			"Нет"
 	}

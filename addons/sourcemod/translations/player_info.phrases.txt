@@ -2,7 +2,7 @@
 {
 	"TAG"
 	{
-		"en"			"<{green}Player Info{default}>"
+		"en"			"<{green}Player Info{default}> "
 	}
 
 	"LAN_COUNTRY"
@@ -75,6 +75,23 @@
 	}
 
 	"VPN_NOT_DETECTED"
+	{
+		"en"			"Not detected"
+	}
+
+	"INFO_FS"
+	{
+		"#format"		"{1:s}"
+		"en"			"Family Sharing: {1}"
+	}
+
+	"FS_DETECTED"
+	{
+		"#format"		"{1:s}"
+		"en"			"Detected ({1})"
+	}
+
+	"FS_NOT_DETECTED"
 	{
 		"en"			"Not detected"
 	}

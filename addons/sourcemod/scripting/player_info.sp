@@ -5,30 +5,24 @@
 #include <geoip>
 #include <colors>
 
-#undef REQUIRE_PLUGIN
-#include <readyup_rework>
-#define REQUIRE_PLUGIN
-
 
 public Plugin myinfo = {
 	name = "PlayerInfo",
 	author = "TouchMe",
-	description = "Plugin displays information about players (Country, lerp, hours)",
-	version = "build_0004",
+	description = "Plugin displays information about players (Country, lerp, hours, VPN, FS)",
+	version = "build_0005",
 	url = "https://github.com/TouchMe-Inc/l4d2_player_info"
 };
 
-
-/**
- * Libs.
- */
-#define LIB_READY               "readyup_rework"
 
 #define TRANSLATIONS            "player_info.phrases"
 
 #define APP_L4D2                550
 
-#define ITEM_BACK               9
+/**
+ * Libs.
+ */
+#define LIB_READY               "readyup_rework"
 
 /**
  * Teams.
@@ -44,42 +38,9 @@ enum
 	VPN_DETECTED
 }
 
-bool g_bReadyUpAvailable = false;
-bool g_bOldClientReadyUpVisible[MAXPLAYERS + 1] = {false, ...};
+int g_iClientWithVpn[MAXPLAYERS + 1] = {0, ...};
+int g_iClientWithFamilySharing[MAXPLAYERS + 1] = {0, ...};
 
-int g_iVpnClient[MAXPLAYERS + 1] = {0, ...};
-
-
-/**
- * Global event. Called when all plugins loaded.
- */
-public void OnAllPluginsLoaded() {
-	g_bReadyUpAvailable = LibraryExists(LIB_READY);
-}
-
-/**
- * Global event. Called when a library is removed.
- *
- * @param sName     Library name
- */
-public void OnLibraryRemoved(const char[] sName)
-{
-	if (StrEqual(sName, LIB_READY)) {
-		g_bReadyUpAvailable = false;
-	}
-}
-
-/**
- * Global event. Called when a library is added.
- *
- * @param sName     Library name
- */
-public void OnLibraryAdded(const char[] sName)
-{
-	if (StrEqual(sName, LIB_READY)) {
-		g_bReadyUpAvailable = true;
-	}
-}
 
 /**
   * Called before OnPluginStart.
@@ -105,6 +66,21 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_info", Cmd_Info);
 }
 
+public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId)
+{
+	int iClient = GetClientFromSteamID(iAuthId);
+
+	if (iClient == -1) {
+		return;
+	}
+
+	if (iOwnerAuthId > 0 && iOwnerAuthId != iAuthId) {
+		g_iClientWithFamilySharing[iClient] = iOwnerAuthId;
+	} else {
+		g_iClientWithFamilySharing[iClient] = 0;
+	}
+}
+
 /**
  *
  */
@@ -122,7 +98,7 @@ public void OnClientAuthorized(int iClient, const char[] sAuthId)
 	/*
 	 * Check VPN.
 	 */
-	g_iVpnClient[iClient] = VPN_DETECTING;
+	g_iClientWithVpn[iClient] = VPN_DETECTING;
 
 	char sIp[16];
 	GetClientIP(iClient, sIp, sizeof(sIp));
@@ -186,7 +162,7 @@ public void HttpRequestData(const char[] sContent, DataPack hPack)
 		return;
 	}
 
-	g_iVpnClient[iClient] = StrEqual(sContent, "Y") ? VPN_DETECTED : VPN_NOT_DETECTED;
+	g_iClientWithVpn[iClient] = StrEqual(sContent, "Y") ? VPN_DETECTED : VPN_NOT_DETECTED;
 }
 
 /**
@@ -298,16 +274,6 @@ int HandlerPlayerMenu(Menu hMenu, MenuAction hAction, int iClient, int iItem)
 void ShowInfoMenu(int iClient, int iTarget)
 {
 	/*
-	 * ReadyUp support.
-	 */
-	if (g_bReadyUpAvailable)
-	{
-		g_bOldClientReadyUpVisible[iClient] = IsClientReadyUpVisible(iClient);
-
-		SetClientReadyUpVisible(iClient, false);
-	}
-
-	/*
 	 * Get name.
 	 */
 	char sName[MAX_NAME_LENGTH]; GetClientNameFixed(iTarget, sName, sizeof(sName), 25);
@@ -338,46 +304,61 @@ void ShowInfoMenu(int iClient, int iTarget)
 
 	char sVpnStatus[32];
 
-	switch(g_iVpnClient[iTarget])
+	switch(g_iClientWithVpn[iTarget])
 	{
 		case VPN_DETECTING: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_DETECTING", iClient);
-		case VPN_DETECTED: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_DETECTED", iClient);
 		case VPN_NOT_DETECTED: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_NOT_DETECTED", iClient);
+		case VPN_DETECTED: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_DETECTED", iClient);
 	}
 
+	char sFamilySharingStatus[64];
+
+	if (!g_iClientWithFamilySharing[iTarget]) {
+		FormatEx(sFamilySharingStatus, sizeof(sFamilySharingStatus), "%T", "FS_NOT_DETECTED", iClient);
+	}
+
+	else
+	{
+		char sSteamID[32];
+		FormatEx(sSteamID, sizeof(sSteamID), "STEAM_1:%d:%d", (g_iClientWithFamilySharing[iTarget] & 1), (g_iClientWithFamilySharing[iTarget] >> 1));
+		FormatEx(sFamilySharingStatus, sizeof(sFamilySharingStatus), "%T", "FS_DETECTED", iClient, sSteamID);
+	}
+
+	Menu hMenu = CreateMenu(HandlerInfoMenu, MenuAction_Select|MenuAction_End);
+
+	SetMenuTitle(hMenu, "%T\n%T\n%T\n%T\n%T\n%T\n%T\n%T",
+		"MENU_INFO_TITLE", iClient, sName,
+		"MENU_SPACE", iClient,
+		"INFO_VPN", iClient, sVpnStatus,
+		"INFO_FS", iClient, sFamilySharingStatus,
+		"INFO_LOCATION", iClient, sCountry, sCity,
+		"INFO_LERP", iClient, GetClientLerp(iTarget),
+		"INFO_PLAYED_TIME", iClient, GetClientHours(iTarget),
+		"MENU_SPACE", iClient
+	);
+
 	/*
-	 * Send panel.
+	 * Add back button.
 	 */
-	Panel hPanel = CreatePanel();
+	char sBack[32];
+	FormatEx(sBack, sizeof(sBack), "%T", "MENU_BACK", iClient);
+	AddMenuItem(hMenu,"back", sBack);
 
-	DrawPanelFormatText(hPanel, "%T", "MENU_INFO_TITLE", iClient, sName);
-	DrawPanelFormatText(hPanel, "%T", "MENU_SPACE", iClient);
-	DrawPanelFormatText(hPanel, "%T", "INFO_VPN", iClient, sVpnStatus);
-	DrawPanelFormatText(hPanel, "%T", "INFO_LOCATION", iClient, sCountry, sCity);
-	DrawPanelFormatText(hPanel, "%T", "INFO_LERP", iClient, GetClientLerp(iTarget));
-	DrawPanelFormatText(hPanel, "%T", "INFO_PLAYED_TIME", iClient, GetClientHours(iTarget));
-	DrawPanelFormatText(hPanel, "%T", "MENU_SPACE", iClient);
-	DrawPanelFormatText(hPanel, "->%d. %T", ITEM_BACK, "MENU_BACK", iClient);
+	SetMenuExitButton(hMenu, false);
 
-	SendPanelToClient(hPanel, iClient, DummyHandler, MENU_TIME_FOREVER);
-
-	CloseHandle(hPanel);
+	DisplayMenu(hMenu, iClient, MENU_TIME_FOREVER);
 }
 
 /**
  *
  */
-int DummyHandler(Handle hMenu, MenuAction hAction, int iParam1, int iParam2)
+int HandlerInfoMenu(Handle hMenu, MenuAction hAction, int iParam1, int iParam2)
 {
-	/*
-	 * ReadyUp support.
-	 */
-	if (g_bReadyUpAvailable && IsClientConnected(iParam1)) {
-		SetClientReadyUpVisible(iParam1, g_bOldClientReadyUpVisible[iParam1]);
-	}
+	switch(hAction)
+	{
+		case MenuAction_End: CloseHandle(hMenu);
 
-	if (hAction == MenuAction_Select && iParam2 == ITEM_BACK) {
-		ShowPlayerMenu(iParam1);
+		case MenuAction_Select: ShowPlayerMenu(iParam1);
 	}
 
 	return 0;
@@ -386,11 +367,18 @@ int DummyHandler(Handle hMenu, MenuAction hAction, int iParam1, int iParam2)
 /**
  *
  */
-bool DrawPanelFormatText(Handle hPanel, const char[] sText, any ...)
+int GetClientFromSteamID(int iAuthId)
 {
-	char sFormatText[128];
-	VFormat(sFormatText, sizeof(sFormatText), sText, 3);
-	return DrawPanelText(hPanel, sFormatText);
+	for (int iClient = 1; iClient <= MaxClients; iClient++)
+	{
+		if (!IsClientConnected(iClient) || GetSteamAccountID(iClient) != iAuthId) {
+			continue;
+		}
+
+		return iClient;
+	}
+
+	return -1;
 }
 
 /**
@@ -405,7 +393,7 @@ float GetClientLerp(int iClient)
 }
 
 /**
- *
+ * Returns the hours played by the player from steam statistics.
  */
 float GetClientHours(int iClient)
 {
@@ -452,8 +440,9 @@ bool IsLanIP(char src[16])
 	{
 		int ipnum = StringToInt(ip4[0])*65536 + StringToInt(ip4[1])*256 + StringToInt(ip4[2]);
 
-		if((ipnum >= 655360 && ipnum < 655360+65535) || (ipnum >= 11276288 && ipnum < 11276288+4095) || (ipnum >= 12625920 && ipnum < 12625920+255))
-		{
+		if((ipnum >= 655360 && ipnum < 655360+65535)
+		|| (ipnum >= 11276288 && ipnum < 11276288+4095)
+		|| (ipnum >= 12625920 && ipnum < 12625920+255)) {
 			return true;
 		}
 	}
