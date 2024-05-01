@@ -1,6 +1,7 @@
 #pragma semicolon               1
 #pragma newdecls                required
 
+#include <sourcemod>
 #include <steamworks>
 #include <geoip>
 #include <colors>
@@ -10,19 +11,17 @@ public Plugin myinfo = {
 	name = "PlayerInfo",
 	author = "TouchMe",
 	description = "Plugin displays information about players (Country, lerp, hours, VPN, FS)",
-	version = "build_0005",
+	version = "build_0006",
 	url = "https://github.com/TouchMe-Inc/l4d2_player_info"
 };
 
 
 #define TRANSLATIONS            "player_info.phrases"
 
-#define APP_L4D2                550
-
 /**
- * Libs.
+ * APP ID FOR STEAMWORKS.
  */
-#define LIB_READY               "readyup_rework"
+#define APP_L4D2                550
 
 /**
  * Teams.
@@ -38,6 +37,7 @@ enum
 	VPN_DETECTED
 }
 
+int g_iClientMenuSelectionPosition[MAXPLAYERS + 1] = {0, ...};
 int g_iClientWithVpn[MAXPLAYERS + 1] = {0, ...};
 int g_iClientWithFamilySharing[MAXPLAYERS + 1] = {0, ...};
 
@@ -57,7 +57,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 /**
- *
+ * Called when the plugin is fully initialized and all known external references are resolved.
  */
 public void OnPluginStart()
 {
@@ -66,6 +66,9 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_info", Cmd_Info);
 }
 
+/**
+ * Detect Family Sharing.
+ */
 public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId)
 {
 	int iClient = GetClientFromSteamID(iAuthId);
@@ -82,7 +85,7 @@ public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId)
 }
 
 /**
- *
+ * Send request for check VPN.
  */
 public void OnClientAuthorized(int iClient, const char[] sAuthId)
 {
@@ -174,9 +177,11 @@ Action Cmd_Info(int iClient, int iArgs)
 		return Plugin_Handled;
 	}
 
+	g_iClientMenuSelectionPosition[iClient] = 0;
+
 	if (!iArgs)
 	{
-		ShowPlayerMenu(iClient);
+		ShowPlayerMenu(iClient, g_iClientMenuSelectionPosition[iClient]);
 		return Plugin_Handled;
 	}
 
@@ -203,7 +208,7 @@ Action Cmd_Info(int iClient, int iArgs)
 /**
  *
  */
-void ShowPlayerMenu(int iClient)
+void ShowPlayerMenu(int iClient, int iSelectionPosition)
 {
 	int iTotalPlayers[4];
 	int[][] iPlayers = new int[4][MaxClients];
@@ -226,7 +231,7 @@ void ShowPlayerMenu(int iClient)
 
 	char sTarget[4], sName[MAX_NAME_LENGTH];
 
-	for (int iTeam = TEAM_SPECTATOR; iTeam <= TEAM_INFECTED; iTeam ++)
+	for (int iTeam = TEAM_INFECTED; iTeam >= TEAM_SPECTATOR; iTeam --)
 	{
 		for (int iPlayerIndex = 0; iPlayerIndex < iTotalPlayers[iTeam]; iPlayerIndex ++)
 		{
@@ -239,7 +244,7 @@ void ShowPlayerMenu(int iClient)
 		}
 	}
 
-	DisplayMenu(hMenu, iClient, MENU_TIME_FOREVER);
+	DisplayMenuAtItem(hMenu, iClient, iSelectionPosition, MENU_TIME_FOREVER);
 }
 
 /**
@@ -258,8 +263,12 @@ int HandlerPlayerMenu(Menu hMenu, MenuAction hAction, int iClient, int iItem)
 			int iTarget = StringToInt(sTarget);
 
 			if (!IsClientInGame(iTarget)) {
-				ShowPlayerMenu(iClient);
-			} else {
+				ShowPlayerMenu(iClient, 0);
+			}
+
+			else
+			{
+				g_iClientMenuSelectionPosition[iClient] = GetMenuSelectionPosition();
 				ShowInfoMenu(iClient, iTarget);
 			}
 		}
@@ -358,7 +367,7 @@ int HandlerInfoMenu(Handle hMenu, MenuAction hAction, int iParam1, int iParam2)
 	{
 		case MenuAction_End: CloseHandle(hMenu);
 
-		case MenuAction_Select: ShowPlayerMenu(iParam1);
+		case MenuAction_Select: ShowPlayerMenu(iParam1, g_iClientMenuSelectionPosition[iParam1]);
 	}
 
 	return 0;
@@ -382,7 +391,7 @@ int GetClientFromSteamID(int iAuthId)
 }
 
 /**
- *
+ * Returns the interpolation value in milliseconds.
  */
 float GetClientLerp(int iClient)
 {
@@ -440,9 +449,8 @@ bool IsLanIP(char src[16])
 	{
 		int ipnum = StringToInt(ip4[0])*65536 + StringToInt(ip4[1])*256 + StringToInt(ip4[2]);
 
-		if((ipnum >= 655360 && ipnum < 655360+65535)
-		|| (ipnum >= 11276288 && ipnum < 11276288+4095)
-		|| (ipnum >= 12625920 && ipnum < 12625920+255)) {
+		if((ipnum >= 655360 && ipnum < 655360+65535) || (ipnum >= 11276288 && ipnum < 11276288+4095) || (ipnum >= 12625920 && ipnum < 12625920+255))
+		{
 			return true;
 		}
 	}
