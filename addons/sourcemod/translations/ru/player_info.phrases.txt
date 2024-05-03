@@ -111,12 +111,12 @@
 	"INFO_CMDRATE"
 	{
 		"#format"		"{1:.1f}"
-		"ru"			"Cmd rate: {1}"
+		"ru"			"Cmd Rate: {1}"
 	}
 
 	"INFO_UPDATERATE"
 	{
 		"#format"		"{1:.1f}"
-		"ru"			"Update rate: {1}"
+		"ru"			"Update Rate: {1}"
 	}
 }
