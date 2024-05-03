@@ -11,12 +11,14 @@ public Plugin myinfo = {
 	name = "PlayerInfo",
 	author = "TouchMe",
 	description = "Plugin displays information about players (Country, lerp, hours, VPN, FS)",
-	version = "build_0006",
+	version = "build_0007",
 	url = "https://github.com/TouchMe-Inc/l4d2_player_info"
 };
 
 
 #define TRANSLATIONS            "player_info.phrases"
+
+#define URL_VPN_CHECK          "http://proxy.mind-media.com/block/proxycheck.php?ip=%s"
 
 /**
  * APP ID FOR STEAMWORKS.
@@ -66,9 +68,7 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_info", Cmd_Info);
 }
 
-/**
- * Detect Family Sharing.
- */
+
 public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId)
 {
 	int iClient = GetClientFromSteamID(iAuthId);
@@ -77,45 +77,45 @@ public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId)
 		return;
 	}
 
+	/*
+	 * Detect Family Sharing.
+	 */
 	if (iOwnerAuthId > 0 && iOwnerAuthId != iAuthId) {
 		g_iClientWithFamilySharing[iClient] = iOwnerAuthId;
 	} else {
 		g_iClientWithFamilySharing[iClient] = 0;
 	}
-}
 
-/**
- * Send request for check VPN.
- */
-public void OnClientAuthorized(int iClient, const char[] sAuthId)
-{
-	if (sAuthId[0] == 'B' || sAuthId[9] == 'L') {
-		return;
-	}
+	/*
+	 * Reset VPN status.
+	 */
+	g_iClientWithVpn[iClient] = VPN_DETECTING;
 
 	/*
 	 * Get player stats.
 	 */
 	SteamWorks_RequestStats(iClient, APP_L4D2);
+}
 
-	/*
-	 * Check VPN.
-	 */
-	g_iClientWithVpn[iClient] = VPN_DETECTING;
+/**
+ * Send request for check VPN.
+ * Called once a client is authorized and fully in-game, and after all post-connection authorizations have been performed.
+ */
+public void OnClientPostAdminCheck(int iClient)
+{
+	if (!IsClientInGame(iClient) || IsFakeClient(iClient)) {
+		return;
+	}
 
 	char sIp[16];
 	GetClientIP(iClient, sIp, sizeof(sIp));
 
-	DataPack hPack = CreateDataPack();
-	WritePackString(hPack, sIp);
-	WritePackCell(hPack, iClient);
-
 	char sRequestUrl[96];
-	FormatEx(sRequestUrl, sizeof(sRequestUrl), "http://proxy.mind-media.com/block/proxycheck.php?ip=%s", sIp);
+	FormatEx(sRequestUrl, sizeof(sRequestUrl), URL_VPN_CHECK, sIp);
 
 	Handle hDetectVpn = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, sRequestUrl);
 	SteamWorks_SetHTTPCallbacks(hDetectVpn, HttpResponseCompleted, _, HttpResponseDataReceived);
-	SteamWorks_SetHTTPRequestContextValue(hDetectVpn, hPack);
+	SteamWorks_SetHTTPRequestContextValue(hDetectVpn, GetClientUserId(iClient));
 	SteamWorks_SetHTTPRequestNetworkActivityTimeout(hDetectVpn, 5);
 	SteamWorks_SendHTTPRequest(hDetectVpn);
 }
@@ -123,27 +123,24 @@ public void OnClientAuthorized(int iClient, const char[] sAuthId)
 /**
  *
  */
-public void HttpResponseDataReceived(Handle hRequest, bool bFailure, int offset, int bytesReceived, DataPack hPack)
+public void HttpResponseDataReceived(Handle hRequest, bool bFailure, int offset, int bytesReceived, int iUserId)
 {
 	if (bFailure)
 	{
-		CloseHandle(hPack);
 		CloseHandle(hRequest);
 		return;
 	}
 
-	SteamWorks_GetHTTPResponseBodyCallback(hRequest, HttpRequestData, hPack);
+	SteamWorks_GetHTTPResponseBodyCallback(hRequest, HttpRequestData, iUserId);
 	CloseHandle(hRequest);
 }
 
 /**
  *
  */
-public void HttpResponseCompleted(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode eStatusCode, DataPack hPack)
+public void HttpResponseCompleted(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode eStatusCode)
 {
-	if (bFailure || !bRequestSuccessful)
-	{
-		CloseHandle(hPack);
+	if (bFailure || !bRequestSuccessful) {
 		CloseHandle(hRequest);
 	}
 }
@@ -151,17 +148,11 @@ public void HttpResponseCompleted(Handle hRequest, bool bFailure, bool bRequestS
 /**
  *
  */
-public void HttpRequestData(const char[] sContent, DataPack hPack)
+public void HttpRequestData(const char[] sContent, int iUserId)
 {
-	char sIp[16];
-	ResetPack(hPack);
+	int iClient = GetClientOfUserId(iUserId);
 
-	ReadPackString(hPack, sIp, sizeof(sIp));
-	int iClient = ReadPackCell(hPack);
-
-	CloseHandle(hPack);
-
-	if (!IsClientConnected(iClient)) {
+	if (!iClient) {
 		return;
 	}
 
@@ -311,6 +302,9 @@ void ShowInfoMenu(int iClient, int iTarget)
 		}
 	}
 
+	/*
+	 * Get VPN status.
+	 */
 	char sVpnStatus[32];
 
 	switch(g_iClientWithVpn[iTarget])
@@ -320,6 +314,9 @@ void ShowInfoMenu(int iClient, int iTarget)
 		case VPN_DETECTED: FormatEx(sVpnStatus, sizeof(sVpnStatus), "%T", "VPN_DETECTED", iClient);
 	}
 
+	/*
+	 * Get Family Sharing status.
+	 */
 	char sFamilySharingStatus[64];
 
 	if (!g_iClientWithFamilySharing[iTarget]) {
@@ -333,6 +330,9 @@ void ShowInfoMenu(int iClient, int iTarget)
 		FormatEx(sFamilySharingStatus, sizeof(sFamilySharingStatus), "%T", "FS_DETECTED", iClient, sSteamID);
 	}
 
+	/*
+	 * Show menu.
+	 */
 	Menu hMenu = CreateMenu(HandlerInfoMenu, MenuAction_Select|MenuAction_End);
 
 	SetMenuTitle(hMenu, "%T\n%T\n%T\n%T\n%T\n%T\n%T\n%T",
@@ -347,7 +347,7 @@ void ShowInfoMenu(int iClient, int iTarget)
 	);
 
 	/*
-	 * Add back button.
+	 * Add back button (required).
 	 */
 	char sBack[32];
 	FormatEx(sBack, sizeof(sBack), "%T", "MENU_BACK", iClient);
