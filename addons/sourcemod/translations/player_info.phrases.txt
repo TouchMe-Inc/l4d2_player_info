@@ -2,7 +2,7 @@
 {
 	"TAG"
 	{
-		"en"			"<{green}Player Info{default}> "
+		"en"			"<{green}Player Info{default}>"
 	}
 
 	"LAN_COUNTRY"
@@ -96,15 +96,27 @@
 		"en"			"Not detected"
 	}
 
+	"INFO_PLAYED_TIME"
+	{
+		"#format"		"{1:.1f}"
+		"en"			"Played time: {1} hours"
+	}
+
 	"INFO_LERP"
 	{
 		"#format"		"{1:.1f}"
 		"en"			"Lerp: {1}"
 	}
 
-	"INFO_PLAYED_TIME"
+	"INFO_CMDRATE"
 	{
 		"#format"		"{1:.1f}"
-		"en"			"Played time: {1} hours"
+		"en"			"CmdRate: {1}"
+	}
+
+	"INFO_UPDATERATE"
+	{
+		"#format"		"{1:.1f}"
+		"en"			"UpdateRate: {1}"
 	}
 }

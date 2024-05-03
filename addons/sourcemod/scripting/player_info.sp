@@ -10,8 +10,8 @@
 public Plugin myinfo = {
 	name = "PlayerInfo",
 	author = "TouchMe",
-	description = "Plugin displays information about players (Country, lerp, hours, VPN, FS)",
-	version = "build_0007",
+	description = "Plugin displays information about players (VPN, FS, Country, Hours, Lerp, CmdRate, UpdateRate)",
+	version = "build_0009",
 	url = "https://github.com/TouchMe-Inc/l4d2_player_info"
 };
 
@@ -103,7 +103,7 @@ public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId)
  */
 public void OnClientPostAdminCheck(int iClient)
 {
-	if (!IsClientInGame(iClient) || IsFakeClient(iClient)) {
+	if (IsFakeClient(iClient)) {
 		return;
 	}
 
@@ -335,14 +335,16 @@ void ShowInfoMenu(int iClient, int iTarget)
 	 */
 	Menu hMenu = CreateMenu(HandlerInfoMenu, MenuAction_Select|MenuAction_End);
 
-	SetMenuTitle(hMenu, "%T\n%T\n%T\n%T\n%T\n%T\n%T\n%T",
+	SetMenuTitle(hMenu, "%T\n%T\n%T\n%T\n%T\n%T\n%T\n%T\n%T\n%T",
 		"MENU_INFO_TITLE", iClient, sName,
 		"MENU_SPACE", iClient,
 		"INFO_VPN", iClient, sVpnStatus,
 		"INFO_FS", iClient, sFamilySharingStatus,
 		"INFO_LOCATION", iClient, sCountry, sCity,
-		"INFO_LERP", iClient, GetClientLerp(iTarget),
 		"INFO_PLAYED_TIME", iClient, GetClientHours(iTarget),
+		"INFO_LERP", iClient, GetClientLerp(iTarget),
+		"INFO_CMDRATE", iClient, GetClientAvgPackets(iTarget, NetFlow_Incoming), 
+		"INFO_UPDATERATE", iClient, GetClientAvgPackets(iTarget, NetFlow_Outgoing),
 		"MENU_SPACE", iClient
 	);
 
@@ -447,9 +449,11 @@ bool IsLanIP(char src[16])
 
 	if (ExplodeString(src, ".", ip4, 4, 4) == 4)
 	{
-		int ipnum = StringToInt(ip4[0])*65536 + StringToInt(ip4[1])*256 + StringToInt(ip4[2]);
+		int ipnum = StringToInt(ip4[0])*(1<<16) + StringToInt(ip4[1])*(1<<8) + StringToInt(ip4[2]);
 
-		if((ipnum >= 655360 && ipnum < 655360+65535) || (ipnum >= 11276288 && ipnum < 11276288+4095) || (ipnum >= 12625920 && ipnum < 12625920+255))
+		if((ipnum >= 655360 && ipnum < 655360+65535)
+		|| (ipnum >= 11276288 && ipnum < 11276288+4095)
+		|| (ipnum >= 12625920 && ipnum < 12625920+255))
 		{
 			return true;
 		}

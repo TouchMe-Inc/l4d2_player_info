@@ -96,15 +96,27 @@
 		"ru"			"Нет"
 	}
 
+	"INFO_PLAYED_TIME"
+	{
+		"#format"		"{1:.1f}"
+		"ru"			"Наигранно: {1} часов"
+	}
+
 	"INFO_LERP"
 	{
 		"#format"		"{1:.1f}"
 		"ru"			"Lerp: {1}"
 	}
 
-	"INFO_PLAYED_TIME"
+	"INFO_CMDRATE"
 	{
 		"#format"		"{1:.1f}"
-		"ru"			"Наигранно: {1} часов"
+		"ru"			"CmdRate: {1}"
+	}
+
+	"INFO_UPDATERATE"
+	{
+		"#format"		"{1:.1f}"
+		"ru"			"UpdateRate: {1}"
 	}
 }
