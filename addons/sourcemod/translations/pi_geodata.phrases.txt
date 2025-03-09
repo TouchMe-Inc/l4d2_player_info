@@ -1,0 +1,30 @@
+"Phrases"
+{
+	"DESCRIPTION"
+	{
+		"#format"		"{1:s}"
+		"en"			"Location: {1}"
+	}
+
+	"LAN"
+    {
+        "en"			"Local"
+    }
+
+    "UNKNOWN_COUNTRY"
+    {
+        "en"			"Unknown"
+    }
+
+    "ONLY_COUNTRY"
+    {
+        "#format"		"{1:s}"
+        "en"			"{1}"
+    }
+
+    "COUNTRY_AND_CITY"
+    {
+        "#format"		"{1:s},{2:s}"
+        "en"			"{1}, {2}"
+    }
+}

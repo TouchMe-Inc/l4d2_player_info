@@ -1,122 +1,24 @@
 "Phrases"
 {
-	"TAG"
-	{
-		"en"			"<{green}Player Info{default}>"
-	}
+    "TAG"
+    {
+        "en"			"<{green}Player Info{default}> "
+    }
 
-	"LAN_COUNTRY"
-	{
-		"en"			"Local"
-	}
+    "BAD_ARG"
+    {
+        "#format"		"{1:s}"
+        "en"			"Error: no players found for the request \"{1}\""
+    }
 
-	"LAN_CITY"
-	{
-		"en"			"Hidden"
-	}
+    "MENU_PLAYERS_TITLE"
+    {
+        "en"			"Select a player for show info:\n "
+    }
 
-	"UNKNOWN_COUNTRY"
-	{
-		"en"			"Unknown"
-	}
-
-	"UNKNOWN_CITY"
-	{
-		"en"			"Unknown"
-	}
-
-	"BAD_ARG"
-	{
-		"#format"		"{1:s}"
-		"en"			"Error: no players found for the request \"{1}\""
-	}
-
-	"MENU_PLAYER_TITLE"
-	{
-		"en"			"Select a player for show info:"
-	}
-
-	"MENU_INFO_TITLE"
-	{
-		"#format"		"{1:s}"
-		"en"			"About {1}"
-	}
-
-	"MENU_SPACE"
-	{
-		"en"			"- - - - - - - - - - - - - - - - - - -"
-	}
-
-	"MENU_BACK"
-	{
-		"en"			"Back"
-	}
-
-	"INFO_LOCATION"
-	{
-		"#format"		"{1:s},{2:s}"
-		"en"			"Location: {1}, {2}"
-	}
-
-	"INFO_VPN"
-	{
-		"#format"		"{1:s}"
-		"en"			"VPN: {1}"
-	}
-
-	"VPN_DETECTING"
-	{
-		"en"			"Detecting..."
-	}
-
-	"VPN_DETECTED"
-	{
-		"en"			"Detected"
-	}
-
-	"VPN_NOT_DETECTED"
-	{
-		"en"			"Not detected"
-	}
-
-	"INFO_FS"
-	{
-		"#format"		"{1:s}"
-		"en"			"Family Sharing: {1}"
-	}
-
-	"FS_DETECTED"
-	{
-		"#format"		"{1:s}"
-		"en"			"Detected ({1})"
-	}
-
-	"FS_NOT_DETECTED"
-	{
-		"en"			"Not detected"
-	}
-
-	"INFO_PLAYED_TIME"
-	{
-		"#format"		"{1:.1f}"
-		"en"			"Played time: {1} hours"
-	}
-
-	"INFO_LERP"
-	{
-		"#format"		"{1:.1f}"
-		"en"			"Lerp: {1}"
-	}
-
-	"INFO_CMDRATE"
-	{
-		"#format"		"{1:.1f}"
-		"en"			"Cmd Rate: {1}"
-	}
-
-	"INFO_UPDATERATE"
-	{
-		"#format"		"{1:.1f}"
-		"en"			"Update Rate: {1}"
-	}
+    "MENU_PLAYER_INFO_TITLE"
+    {
+        "#format"		"{1:s}"
+        "en"			"About \"{1}\":\n "
+    }
 }
