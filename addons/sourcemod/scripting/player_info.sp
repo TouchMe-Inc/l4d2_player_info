@@ -191,6 +191,10 @@ void ShowPlayerInfoMenu(int iClient, int iTarget)
         Handle hDescription = GetArrayCell(g_hPlayerInfo, iIdx);
         ExecuteForward_GetDescription(hDescription, szDescription, sizeof(szDescription), iClient, iTarget);
 
+        if (szDescription[0] == '\0') {
+            continue;
+        }
+
         AddMenuItem(menu, "", szDescription, ITEMDRAW_DISABLED);
     }
 
