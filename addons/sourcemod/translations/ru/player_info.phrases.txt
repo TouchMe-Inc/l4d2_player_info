@@ -1,0 +1,24 @@
+"Phrases"
+{
+    "TAG"
+    {
+        "ru"			"<{green}Player Info{default}> "
+    }
+
+    "BAD_ARG"
+    {
+        "#format"		"{1:s}"
+        "ru"			"Ошибка: нет игроков по запросу \"{1}\""
+    }
+
+    "MENU_PLAYERS_TITLE"
+    {
+        "ru"			"Выберите игрока для получения информации:\n "
+    }
+
+    "MENU_PLAYER_INFO_TITLE"
+    {
+        "#format"		"{1:s}"
+        "ru"			"О \"{1}\":\n "
+    }
+}

@@ -1,0 +1,23 @@
+"Phrases"
+{
+	"DESCRIPTION"
+	{
+		"#format"		"{1:s}"
+		"en"			"VPN: {1}"
+	}
+
+	"VPN_INPROGRESS"
+	{
+		"en"			"Detecting..."
+	}
+
+	"VPN_DETECTED"
+	{
+		"en"			"Detected"
+	}
+
+	"VPN_NOT_DETECTED"
+	{
+		"en"			"Not detected"
+	}
+}

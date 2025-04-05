@@ -1,0 +1,8 @@
+"Phrases"
+{
+	"DESCRIPTION"
+	{
+		"#format"		"{1:.0f}"
+		"en"			"Lerp: {1}"
+	}
+}

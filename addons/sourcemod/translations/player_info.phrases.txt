@@ -1,0 +1,24 @@
+"Phrases"
+{
+    "TAG"
+    {
+        "en"			"<{green}Player Info{default}> "
+    }
+
+    "BAD_ARG"
+    {
+        "#format"		"{1:s}"
+        "en"			"Error: no players found for the request \"{1}\""
+    }
+
+    "MENU_PLAYERS_TITLE"
+    {
+        "en"			"Select a player for show info:\n "
+    }
+
+    "MENU_PLAYER_INFO_TITLE"
+    {
+        "#format"		"{1:s}"
+        "en"			"About \"{1}\":\n "
+    }
+}

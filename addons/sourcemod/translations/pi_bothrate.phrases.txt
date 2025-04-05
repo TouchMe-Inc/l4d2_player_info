@@ -1,0 +1,8 @@
+"Phrases"
+{
+	"DESCRIPTION"
+	{
+		"#format"		"{1:.0f},{2:.0f}"
+		"en"			"Cmd/Update rate: {1}/{2}"
+	}
+}
