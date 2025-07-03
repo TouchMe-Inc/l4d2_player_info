@@ -4,9 +4,8 @@
 #include <sourcemod>
 #include <player_info>
 
-public Plugin myinfo =
-{
-    name        = "PlayerInfoInterp",
+public Plugin myinfo = {
+    name        = "[PlayerInfo] Interp",
     author      = "TouchMe",
     description = "Show client iterpolation",
     version     = "build_0000",

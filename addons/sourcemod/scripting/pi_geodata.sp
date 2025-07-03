@@ -6,9 +6,8 @@
 #include <player_info>
 
 
-public Plugin myinfo =
-{
-    name        = "PlayerInfoGeoData",
+public Plugin myinfo = {
+    name        = "[PlayerInfo] GeoData",
     author      = "TouchMe",
     description = "Show client geodata",
     version     = "build_0000",
@@ -34,20 +33,20 @@ public void OnPluginStart() {
 
 public Action GetPlayerGeoData(char[] szBuffer, int iLength, int iClient, int iTarget)
 {
-    char sIp[16];
-    GetClientIP(iTarget, sIp, sizeof(sIp));
+    char szIp[16];
+    GetClientIP(iTarget, szIp, sizeof(szIp));
 
     char szGeoData[64];
-    if (!IsLanIP(sIp))
+    if (!IsLanIP(szIp))
     {
-        char sCountry[32];
-        if (GeoipCountryEx(sIp, sCountry, sizeof(sCountry), LANG_SERVER))
+        char szCountry[32];
+        if (GeoipCountryEx(szIp, szCountry, sizeof(szCountry), LANG_SERVER))
         {
-            char sCity[32];
-            if (GeoipCity(sIp, sCity, sizeof(sCity), LANG_SERVER)) {
-                FormatEx(szGeoData, sizeof(szGeoData), "%T", "COUNTRY_AND_CITY", LANG_SERVER, sCountry, sCity);
+            char szCity[32];
+            if (GeoipCity(szIp, szCity, sizeof(szCity), LANG_SERVER)) {
+                FormatEx(szGeoData, sizeof(szGeoData), "%T", "COUNTRY_AND_CITY", LANG_SERVER, szCountry, szCity);
             } else {
-                FormatEx(szGeoData, sizeof(szGeoData), "%T", "ONLY_COUNTRY", LANG_SERVER, sCountry);
+                FormatEx(szGeoData, sizeof(szGeoData), "%T", "ONLY_COUNTRY", LANG_SERVER, szCountry);
             }
         }
         else

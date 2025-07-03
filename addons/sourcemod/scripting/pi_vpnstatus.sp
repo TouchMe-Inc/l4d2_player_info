@@ -6,9 +6,8 @@
 #include <steamworks>
 #include <player_info>
 
-public Plugin myinfo =
-{
-    name        = "PlayerInfoVpnStatus",
+public Plugin myinfo = {
+    name        = "[PlayerInfo] VpnStatus",
     author      = "TouchMe",
     description = "Show client VPN status",
     version     = "build_0000",

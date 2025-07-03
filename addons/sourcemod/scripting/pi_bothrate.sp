@@ -5,9 +5,8 @@
 #include <player_info>
 
 
-public Plugin myinfo =
-{
-    name        = "PlayerInfoBothRate",
+public Plugin myinfo = {
+    name        = "[PlayerInfo] BothRate",
     author      = "TouchMe",
     description = "Show client rate",
     version     = "build_0001",

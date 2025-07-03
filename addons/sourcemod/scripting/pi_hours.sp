@@ -6,8 +6,7 @@
 #include <steamworks>
 
 
-public Plugin myinfo =
-{
+public Plugin myinfo = {
     name        = "PlayerInfoHours",
     author      = "TouchMe",
     description = "Show client hours",
