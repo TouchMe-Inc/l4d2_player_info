@@ -9,7 +9,7 @@ public Plugin myinfo = {
     name        = "PlayerInfo",
     author      = "TouchMe",
     description = "[API ONLY] Plugin displays information about players",
-    version     = "build_0010",
+    version     = "build_0011",
     url         = "https://github.com/TouchMe-Inc/l4d2_player_info"
 };
 
@@ -25,12 +25,18 @@ public Plugin myinfo = {
 #define TEAM_INFECTED           3
 
 
+/**
+ *
+ */
 Handle g_hPlayerInfo = INVALID_HANDLE;
 int g_iPlayerInfoSize = 0;
 
 int g_iClientMenuSelectionPosition[MAXPLAYERS + 1] = {0, ...};
 
 
+/**
+ *
+ */
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
     if (GetEngineVersion() != Engine_Left4Dead2)
@@ -47,6 +53,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     return APLRes_Success;
 }
 
+/**
+ *
+ */
 any Native_MakePlayerInfo(Handle hPlugin, int iParams)
 {
     Function funcPlayerInfo = GetNativeFunction(1);
@@ -62,6 +71,9 @@ any Native_MakePlayerInfo(Handle hPlugin, int iParams)
     return iIndex;
 }
 
+/**
+ *
+ */
 public void OnPluginStart()
 {
     LoadTranslations(TRANSLATIONS);
@@ -88,14 +100,14 @@ Action Cmd_Info(int iClient, int iArgs)
         return Plugin_Handled;
     }
 
-    char sArg[MAX_NAME_LENGTH];
-    GetCmdArg(1, sArg, sizeof(sArg));
+    char szArg[MAX_NAME_LENGTH];
+    GetCmdArg(1, szArg, sizeof(szArg));
 
-    int iTarget = FindOneTarget(iClient, sArg);
+    int iTarget = FindOneTarget(iClient, szArg);
 
     if (iTarget == -1)
     {
-        CReplyToCommand(iClient, "%T%T", "TAG", iClient, "BAD_ARG", iClient, sArg);
+        CReplyToCommand(iClient, "%T%T", "TAG", iClient, "BAD_ARG", iClient, szArg);
         return Plugin_Handled;
     }
 
@@ -116,7 +128,7 @@ void ShowPlayersMenu(int iClient, int iSelectionPosition)
 
     for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer ++)
     {
-        if (!IsClientInGame(iPlayer) || IsFakeClient(iPlayer) || iClient == iPlayer) {
+        if (!IsClientInGame(iPlayer) || IsFakeClient(iPlayer)) {
             continue;
         }
 
@@ -201,6 +213,9 @@ void ShowPlayerInfoMenu(int iClient, int iTarget)
     DisplayMenu(menu, iClient, MENU_TIME_FOREVER);
 }
 
+/**
+ *
+ */
 public int HandleShowInfoMenu(Menu menu, MenuAction action, int iClient, int iSelectedIndex)
 {
     switch (action)
@@ -213,6 +228,9 @@ public int HandleShowInfoMenu(Menu menu, MenuAction action, int iClient, int iSe
     return 0;
 }
 
+/**
+ *
+ */
 Action ExecuteForward_GetDescription(Handle hForward, char[] szBuffer, int iLength, int iClient, int iTarget)
 {
     Action aReturn = Plugin_Continue;

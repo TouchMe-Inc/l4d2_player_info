@@ -11,4 +11,4 @@ Plugin displays information about players.
 ## Require
 * Colors
 * Geoip for pi_geodata
-* [SteamWorks](https://github.com/hexa-core-eu/SteamWorks) for pi_vpnstatus & pi_hours
+* [SteamWorks](https://github.com/TouchMe-Inc/SteamWorks) for pi_vpnstatus & pi_hours
