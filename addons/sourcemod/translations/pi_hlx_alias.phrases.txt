@@ -1,0 +1,8 @@
+"Phrases"
+{
+	"DESCRIPTION"
+	{
+		"#format"		"{1:s}"
+		"en"			"Alias: {1}"
+	}
+}
