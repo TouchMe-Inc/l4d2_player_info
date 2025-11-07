@@ -204,9 +204,8 @@ void ShowPlayerInfoMenu(int iClient, int iTarget)
     for (int iIdx = 0; iIdx < g_iPlayerInfoSize; iIdx ++)
     {
         Handle hDescription = GetArrayCell(g_hPlayerInfo, iIdx);
-        ExecuteForward_GetDescription(hDescription, szDescription, sizeof(szDescription), iClient, iTarget);
-
-        if (szDescription[0] == '\0') {
+        
+        if (ExecuteForward_GetDescription(hDescription, szDescription, sizeof(szDescription), iClient, iTarget) == Plugin_Continue) {
             continue;
         }
 
