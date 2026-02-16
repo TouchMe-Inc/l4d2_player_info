@@ -58,6 +58,11 @@ float GetClientHours(int iClient)
     return float(iPlayedTime) / 3600.0;
 }
 
-public void SteamWorks_OnValidateClient(int iOwnerAuthId, int iAuthId) {
-    SteamWorks_RequestStatsAuthID(iAuthId, APP_L4D2);
+public void OnClientPutInServer(int iClient)
+{
+    if (IsFakeClient(iClient)) {
+        return;
+    }
+
+    SteamWorks_RequestStats(iClient, APP_L4D2);
 }
