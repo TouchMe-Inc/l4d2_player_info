@@ -64,21 +64,20 @@ public Action GetPlayerGeoData(char[] szBuffer, int iLength, int iClient, int iT
     return Plugin_Handled;
 }
 
-bool IsLanIP(char ip[16])
+bool IsLanIP(const char ip[16])
 {
     char ip4[4][4];
-
-    if (ExplodeString(ip, ".", ip4, 4, 4) == 4)
-    {
-        int ipnum = StringToInt(ip4[0]) * 65536 + StringToInt(ip4[1]) * 256 + StringToInt(ip4[2]);
-
-        if((ipnum >= 655360 && ipnum < 655360+65535)
-        || (ipnum >= 11276288 && ipnum < 11276288+4095)
-        || (ipnum >= 12625920 && ipnum < 12625920+255))
-        {
-            return true;
-        }
+    if (ExplodeString(ip, ".", ip4, sizeof ip4, sizeof ip4[]) != 4) {
+        return false;
     }
+
+    int a = StringToInt(ip4[0]);
+    int b = StringToInt(ip4[1]);
+
+    if ((a == 10)
+     || (a == 172 && b >= 16 && b <= 31)
+     || (a == 192 && b == 168))
+        return true;
 
     return false;
 }
