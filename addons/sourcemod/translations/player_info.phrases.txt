@@ -5,20 +5,35 @@
         "en"			"<{green}Player Info{default}> "
     }
 
+    "BRACKET_START"
+    {
+        "en"			"┌ "
+    }
+
+    "BRACKET_MIDDLE"
+    {
+        "en"			"├ "
+    }
+
+    "BRACKET_END"
+    {
+        "en"			"└ "
+    }
+
     "BAD_ARG"
     {
         "#format"		"{1:s}"
-        "en"			"Error: no players found for the request \"{1}\""
+        "en"			"Error: no players found for the request {olive}\"{1}\""
     }
 
     "MENU_PLAYERS_TITLE"
     {
-        "en"			"Select a player for show info:\n "
+        "en"			"Select a player for show info:"
     }
 
-    "MENU_PLAYER_INFO_TITLE"
+    "PLAYER_INFO"
     {
         "#format"		"{1:s}"
-        "en"			"About \"{1}\":\n "
+        "en"			"About {olive}\"{1}\"{default}:"
     }
 }

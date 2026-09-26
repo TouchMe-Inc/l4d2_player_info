@@ -34,8 +34,6 @@ public Plugin myinfo = {
 Handle g_hPlayerInfo = INVALID_HANDLE;
 int g_iPlayerInfoSize = 0;
 
-int g_iClientMenuSelectionPosition[MAXPLAYERS + 1] = {0, ...};
-
 
 /**
  *
@@ -95,11 +93,9 @@ Action Cmd_Info(int iClient, int iArgs)
         return Plugin_Handled;
     }
 
-    g_iClientMenuSelectionPosition[iClient] = 0;
-
     if (!iArgs)
     {
-        ShowPlayersMenu(iClient, g_iClientMenuSelectionPosition[iClient]);
+        ShowPlayersMenu(iClient, 0);
         return Plugin_Handled;
     }
 
@@ -115,7 +111,7 @@ Action Cmd_Info(int iClient, int iArgs)
     }
 
     if (iTarget != iClient) {
-        ShowPlayerInfoMenu(iClient, iTarget);
+        PrintPlayerInfo(iClient, iTarget);
     }
 
     return Plugin_Handled;
@@ -172,8 +168,6 @@ int HandlerPlayerMenu(Menu menu, MenuAction action, int iClient, int iItem)
     {
         case MenuAction_Select:
         {
-            g_iClientMenuSelectionPosition[iClient] = GetMenuSelectionPosition();
-
             char szTarget[4]; GetMenuItem(menu, iItem, szTarget, sizeof(szTarget));
 
             int iTarget = StringToInt(szTarget);
@@ -181,7 +175,8 @@ int HandlerPlayerMenu(Menu menu, MenuAction action, int iClient, int iItem)
             if (!IsClientInGame(iTarget)) {
                 ShowPlayersMenu(iClient, 0);
             } else {
-                ShowPlayerInfoMenu(iClient, iTarget);
+                PrintPlayerInfo(iClient, iTarget);
+                ShowPlayersMenu(iClient, GetMenuSelectionPosition());
             }
         }
 
@@ -191,15 +186,13 @@ int HandlerPlayerMenu(Menu menu, MenuAction action, int iClient, int iItem)
     return 0;
 }
 
-void ShowPlayerInfoMenu(int iClient, int iTarget)
+void PrintPlayerInfo(int iClient, int iTarget)
 {
-    Menu menu = CreateMenu(HandleShowInfoMenu, MenuAction_End|MenuAction_Cancel);
-
     char szTargetName[MAX_NAME_LENGTH];
     GetClientNameFixed(iTarget, szTargetName, sizeof(szTargetName), MAX_SHORT_NAME_LENGTH);
 
-    SetMenuTitle(menu, "%T", "MENU_PLAYER_INFO_TITLE", iClient, szTargetName);
-
+    CPrintToChat(iClient, "%T%T%T", "BRACKET_START", iClient, "TAG", iClient, "PLAYER_INFO", iClient, szTargetName);
+   
     char szDescription[64];
     for (int iIdx = 0; iIdx < g_iPlayerInfoSize; iIdx ++)
     {
@@ -209,25 +202,8 @@ void ShowPlayerInfoMenu(int iClient, int iTarget)
             continue;
         }
 
-        AddMenuItem(menu, "", szDescription, ITEMDRAW_DISABLED);
+        CPrintToChat(iClient, "%T%s", iIdx < (g_iPlayerInfoSize-1) ? "BRACKET_MIDDLE" : "BRACKET_END", iClient, szDescription);
     }
-
-    DisplayMenu(menu, iClient, MENU_TIME_FOREVER);
-}
-
-/**
- *
- */
-public int HandleShowInfoMenu(Menu menu, MenuAction action, int iClient, int iSelectedIndex)
-{
-    switch (action)
-    {
-        case MenuAction_Cancel: ShowPlayersMenu(iClient, g_iClientMenuSelectionPosition[iClient]);
-
-        case MenuAction_End: delete menu;
-    }
-
-    return 0;
 }
 
 /**
