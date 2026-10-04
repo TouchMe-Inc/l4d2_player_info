@@ -2,8 +2,8 @@
 {
 	"DESCRIPTION"
 	{
-		"#format"		"{1:s}"
-		"en"			"VPN: {1}"
+		"#format"		"{1:s},{2:s}"
+		"en"			"VPN: {1} {2}"
 	}
 
 	"VPN_INPROGRESS"
@@ -19,5 +19,11 @@
 	"VPN_NOT_DETECTED"
 	{
 		"en"			"Not detected"
+	}
+
+	"VPN_RISK_SUFFIX"
+	{
+		"#format"       "{1:d}"
+		"en"            "(risk: {1})"
 	}
 }

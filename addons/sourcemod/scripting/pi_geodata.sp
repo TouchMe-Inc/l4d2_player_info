@@ -64,6 +64,9 @@ public Action GetPlayerGeoData(char[] szBuffer, int iLength, int iClient, int iT
     return Plugin_Handled;
 }
 
+/**
+ * RFC 1918: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16.
+ */
 bool IsLanIP(const char ip[16])
 {
     char ip4[4][4];
